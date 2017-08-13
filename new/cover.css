@@ -2,95 +2,6 @@
  * Globals
  */
 
-/* Charts */
-.group text {
-  font: 11px sans-serif;
-  pointer-events: none;
-}
-
-.group path {
-  stroke: #000;
-}
-.node {
-  stroke: #fff;
-  stroke-width: 1.5px;
-  cursor:pointer;
-  fill:#8c510a;
-}
-
-.link {
-  /*stroke: #999;*/
-  stroke-opacity: .6;
-}
-
-path.chord {
-  stroke-width: .75;
-  fill-opacity: .75;
-}
-
-.axis path, .axis line {
-  fill: none;
-  stroke: #000;
-  stroke-width: 2px;
-  shape-rendering: crispEdges;
-}
-.y.axis path,
-.line_y.axis path {
-  stroke: none;
-}
-
-.line {
-      fill: none;
-      stroke-width: 1.5px;
-    }
-.tick text {
-  fill: #7C7C77;
-  text-shadow: none;
-}
-.scrollable-menu {
-    height: auto;
-    max-height: 200px;
-    overflow-x: hidden;
-}
-#force_list {
-    height: auto;
-    max-height: 410px;
-    overflow-y: scroll;
-}
-.force_item {
-  cursor:pointer;
-}
-
-.wordcircle:hover {
-  cursor: pointer;
-}
-
-div.tooltip {
-  position: absolute;
-  text-align: center;
-  width: 600px;
-  height: 150px;
-  padding: 2px;
-  font-family: "Rockwell Extra Bold","Rockwell Bold",monospace;
-  font-size: 64px;
-  /*background: #53565A;*/
-  border: 0px;
-  border-radius: 8px;
-  pointer-events: none;
-}
-
-div.chart_div {
-  position: absolute;
-  text-align: center;
-  width: 400px;
-  height: 540px;
-  padding: 2px;
-  font: 12px;
-}
-.term_label {
-  cursor:pointer;
-}
-
 /* Links */
 a,
 a:focus,
@@ -98,14 +9,20 @@ a:hover {
   color: #fff;
 }
 
+a.twitter,
+a.twitter:focus,
+a.twitter:hover {
+  color: #3D85C6;
+}
+
 /* Custom default button */
 .btn-default,
 .btn-default:hover,
 .btn-default:focus {
-  color: #333;
+  color: #fff;
   text-shadow: none; /* Prevent inheritence from `body` */
-  background-color: #fff;
-  border: 1px solid #fff;
+  background-color: #3D85C6;
+  border: 1px solid #3D85C6;
 }
 
 
@@ -116,12 +33,12 @@ a:hover {
 html,
 body {
   height: 100%;
-  /*background-image:url("http://singaporenews.github.io/static/noisy-texture.png");*/
+  background-color: #fff;
+  font-family: Dinn;
 }
 body {
   color: #000;
   text-align: center;
-  text-shadow: 0 1px 3px rgba(0,0,0,.5);
 }
 
 /* Extra markup and styles for table-esque vertical and horizontal centering */
@@ -147,6 +64,14 @@ body {
   padding: 30px;
 }
 
+.innerNav {
+  padding: 30px;
+}
+
+.inner.cover {
+  margin-top: 100px;
+}
+
 
 /*
  * Header
@@ -167,29 +92,29 @@ body {
   padding-left: 0;
   font-size: 16px;
   font-weight: bold;
-  /*color: #fff; /* IE8 proofing */
-  color: rgba(94,95,89,.75);
+  color: #fff; /* IE8 proofing */
+  color: rgba(255,255,255,.75);
   border-bottom: 2px solid transparent;
 }
 .masthead-nav > li > a:hover,
 .masthead-nav > li > a:focus {
   background-color: transparent;
-  border-bottom-color: #5E5F59;
-  border-bottom-color: rgba(94,95,89,.25);
+  border-bottom-color: #a9a9a9;
+  border-bottom-color: rgba(255,255,255,.25);
 }
 .masthead-nav > .active > a,
 .masthead-nav > .active > a:hover,
 .masthead-nav > .active > a:focus {
-  color: #000;
-  border-bottom-color: #000;
+  color: #fff;
+  border-bottom-color: #fff;
 }
 
 @media (min-width: 768px) {
   .masthead-brand {
-    float: left;
+    float: center;
   }
   .masthead-nav {
-    float: middle;
+    float: center;
   }
 }
 
@@ -212,10 +137,43 @@ body {
  */
 
 .mastfoot {
-  color: #999; /* IE8 proofing */
-  color: rgba(255,255,255,.5);
+  color: #333; /* IE8 proofing */
+  color: #333;
 }
 
+.navbar-header {
+    float: left;
+    padding: 15px;
+    text-align: center;
+    width: 100%;
+    background-color: #3D85C6;
+    color: #fff;
+    font-family: SilaneHead;
+}
+.navbar-title {
+  float:none;
+  color: #fff;
+  font-family: SilaneHead;
+  font-size: 36px;
+}
+.navbar-subtitle {
+  float:none;
+  color: #fff;
+  font-family: SilaneHead;
+  font-size: 22px;
+}
+.cover-chart {
+  position: relative;
+  margin-top: 100px;
+  width: 120%;
+  height: 80%;
+}
+.cover-streamgraph {
+  position: relative;
+  margin-top: 100px;
+  width: 120%;
+  height: 90%;
+}
 
 /*
  * Affix and center
@@ -238,16 +196,37 @@ body {
   /* Handle the widths */
   .masthead,
   .mastfoot,
-  .cover-container {
+  .cover-container,
+  .cover-chart {
+    width: 100%; /* Must be percentage or pixels for horizontal alignment */
+  }
+  .cover-streamgraph {
     width: 100%; /* Must be percentage or pixels for horizontal alignment */
   }
 }
 
 @media (min-width: 992px) {
-  .masthead,
+  .masthead {
+    width: 100%;
+  }
   .mastfoot,
   .cover-container {
-    width: 100%;
-    /*width: 1200px;*/
+    width: 800px;
   }
+  .cover-chart {
+    width: 1000px;
+  }
+  .cover-streamgraph {
+    width: 1400px;
+  }
+}
+
+@font-face {
+  font-family: "SilaneHead";
+  src: url(http://singaporenews.github.io/static/SilaneHeadAtwenty.otf);
+}
+
+@font-face {
+  font-family: "Dinn";
+  src: url(http://singaporenews.github.io/static/DIN.ttf);
 }

@@ -54,33 +54,49 @@
           </nav>
 
           <div class="container">
-            <div class="row vertical-center">
-            <div class="col-md-12 center-block"
+
             <div class="inner cover vertical-center text-center center-block">
-                <p class="lead">
 
-                  The Straits Times covers a vast trove of news stories over a period of 170 years,
-                  spanning many critical checkpoints in Singapore’s history. Distilling the contemporary
-                  mood of the era through the myriad stories is a daunting task, but technology may aid
-                  the process. Stories have been compiled in digital form via online archives of the
-                  National Library Board which enables deep data analysis methods on the news.
-                  <br>
-                  <br>
-                  The following visualization looks at the key words that have been used in each year of
-                  the Straits Times and presents a dynamic portrayal of how words have evolved over time,
-                  suggesting an ebb and flow in tandem with the nation’s history.
+            <script>
 
-                </p>
+              d3.json("Topwords_abstract_bypage_v4.json", function(data){
+                data.forEach(function(d){
+                  d.value = +d.value;
+                });
 
-                <p class="lead center-block" style="text-align: center; margin-top: 30px;">
-                  <button type="button" class="btn btn-primary btn-lg">Explore</button>
-                </p>
+                /*
 
-                <br>
+                var fdata = data.filter(function(el){
+                  return (typeof el.name == 'string');
+                });
+                var fdata = fdata.filter(function(el){
+                  return (el.name.length > 2);
+                });
+
+                console.log(fdata);
+                */
+                var visualization = d3plus.viz()
+                  .container(".inner.cover")
+                  .data(data)
+                  .type("tree_map")
+                  .id(["year","pagegroup","word"])
+                  .size("value")
+                  .draw();
+
+
+
+              });
+
+              function type(d){
+                d.value = +d.value;
+                return d;
+              }
+
+            </script>
+
+
+
             </div>
-            </div>
-          </div>
-
 
           </div><!-- /.container -->
 
@@ -102,40 +118,6 @@
 
     </script>
   </body>
-  <!--
-  <script>
-
-    d3.json("Topwords_200_abstract.json", function(data){
-      data.forEach(function(d){
-        d.value = +d.value;
-      });
-
-      var fdata = data.filter(function(el){
-        return (typeof el.name == 'string');
-      });
-      var fdata = fdata.filter(function(el){
-        return (el.name.length > 2);
-      });
-
-      console.log(fdata);
-
-      var visualization = d3plus.viz()
-        .container(".inner.cover")
-        .data(fdata)
-        .type("tree_map")
-        .id(["year","name"])
-        .size("value")
-        .draw();
 
 
-
-    });
-
-    function type(d){
-      d.value = +d.value;
-      return d;
-    }
-
-  </script>
--->
 </html>

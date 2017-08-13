@@ -26,6 +26,11 @@
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <script type='text/javascript' src="http://bost.ocks.org/mike/fisheye/fisheye.js?0.0.3"></script>
+    <script src="http://www.d3plus.org/js/d3.js"></script>
+    <script src="http://www.d3plus.org/js/d3plus.js"></script>
+
   </head>
 
   <body>
@@ -33,35 +38,46 @@
     <div class="site-wrapper">
       <nav class="navbar navbar-default navbar-fixed-top">
         <div class="navbar-header">
-          <p class="navbar-title" style="margin-bottom: 0px;">The Singapore Story</p>
-          <p class="navbar-subtitle" style="margin-bottom: 0px;">as told by the Straits Times</p>
+          <!--<p class="navbar-title">The Singapore Story</p>-->
+          <div class="navbar-title">
+              <ul class="nav masthead-nav">
+                <li id="li_learn"><a href="http://singaporenews.github.io/new/treemap.html">Learn</a></li>
+                <li id="li_explore"><a href="http://singaporenews.github.io/new/line.html">Explore</a></li>
+                <li class="active" id="li_context"><a href="http://singaporenews.github.io/new/streamgraph.html">Compare</a></li>
+              </ul>
+          </div>
         </div>
       </nav>
 
       <div class="site-wrapper-inner">
 
-        <div class="cover-container">
-          <!--
-          <div class="masthead clearfix">
-            <div class="inner">
-              <h3 class="masthead-brand">Cover</h3>
-            </div>
-          </div>
-        -->
-          <div class="inner cover">
-            <!--<h1 class="cover-heading">Cover your page.</h1>-->
-            <p class="lead">The digitisation of The Straits Times' 170-year-old archive has made it possible to carry out intense data analysis on the newspaper's online archive and capture the mood of the era in which the news stories appeared. This visualisation does that by highlighting keywords which appeared each year in The Straits Times, since 1845, and the stories that set the context for the keywords. The result is a dynamic portrayal of the changing buzzwords and social sentiment over time, which mirror Singapore's evolution.
-            </p>
-            <p class="lead">
-              <a href="http://singaporenews.github.io/treemap.html" class="btn btn-lg btn-default">Start exploring</a>
-            </p>
-          </div>
+        <div class="cover-streamgraph center-block">
+          <script>
 
-          <div class="mastfoot">
-            <div class="inner">
-              <p>Created by <a class="twitter" href="http://twitter.com/Pmeins">@PMeins</a> and <a class="twitter" href="https://twitter.com/hansamad">@Hansamad</a></p>
-            </div>
-          </div>
+          d3.json("Topwords_abstract_bypage_v4.json", function(data){
+            data.forEach(function(d){
+              d.value = +d.value;
+              d.year = +d.year;
+            });
+
+            var visualization = d3plus.viz()
+              .container(".cover-streamgraph")
+              .data(data)
+              .type("stacked")
+              .id(["pagegroup","word"])
+              .text("word")
+              .y("value")
+              .x("year")
+              .time({"value":"year", "solo": [1938,1939,1940,1941,1942,1943,1944,1945]})
+              .draw()
+
+
+
+
+
+            });
+
+          </script>
 
         </div>
 

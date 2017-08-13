@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="Paul Meinshausen" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Singapore News Story</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="cover.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!--<script src="../../assets/js/ie-emulation-modes-warning.js"></script>-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <script type='text/javascript' src="http://bost.ocks.org/mike/fisheye/fisheye.js?0.0.3"></script>
+    <script src="http://www.d3plus.org/js/d3.js"></script>
+    <script src="http://www.d3plus.org/js/d3plus.js"></script>
+
+    <style>
+      a#linechart {
+        background-color: #cc0000;
+        color: white;
+        display: block;
+        font-size: 24px;
+        margin: 50px;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <div class="site-wrapper">
+      <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header">
+          <!--<p class="navbar-title">The Singapore Story</p>-->
+          <div class="navbar-title">
+              <ul class="nav masthead-nav">
+                <li class="active" id="li_learn"><a href="#">Learn</a></li>
+                <li id="li_explore"><a href="http://singaporenews.github.io/line.html">Explore</a></li>
+              </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-chart center-block">
+          <script>
+            d3.json("Topwords_abstract_bycategory_v2.json", function(data){
+              data.forEach(function(d){
+                d.count = +d.stfreq;
+                d.decade_s = d.year.substring(0,3) + '0s';
+                d.year = +d.year;
+              });
+
+              /*
+
+              var fdata = data.filter(function(el){
+                return (typeof el.name == 'string');
+              });
+
+
+              var fdata = data.filter(function(el){
+                return (el.year > 1960);
+              });
+              */
+
+
+
+              var attributes = [
+                {"name": "Events and Society", "hex": "#a6cee3"},
+                {"name": "Persons and Places", "hex": "#b2df8a"},
+                {"name": "Politics and Power", "hex": "#fb9a99"},
+                {"name": "Business and Commerce", "hex": "#fdbf6f"}
+              ]
+
+              var htmlButton = ""
+              //"<a id='linechart' href='http://singaporenews.github.io/line.html'>Click here to see this word's history</a>"
+
+              var visualization = d3plus.viz()
+                .container(".cover-chart")
+                .data(data)
+                .type("tree_map")
+                .id(["decade_s","category","word"])
+                .size("count")
+                .color(function(d){
+                  if(d.category == 'Events and Society'){
+                    return "#a6cee3";
+                  }else if(d.category == 'Persons and Places'){
+                    return "#b2df8a";
+                  }else if (d.category == 'Politics and Power'){
+                    return "#fb9a99";
+                  }else if (d.category == 'Business and Commerce'){
+                    return "#fdbf6f";
+                  }else if (d.decade_s == '1840s'){
+                    return "#3182bd";
+                  }else if (d.decade_s == '1850s'){
+                    return "#6baed6";
+                  }else if (d.decade_s == '1860s'){
+                    return "#9ecae1";
+                  }else if (d.decade_s == '1870s'){
+                    return "#c6dbef";
+                  }else if (d.decade_s == '1880s'){
+                    return "#fd8d3c";
+                  }else if (d.decade_s == '1890s'){
+                    return "#fdae6b";
+                  }else if (d.decade_s == '1900s'){
+                    return "#fdd0a2";
+                  }else if (d.decade_s == '1910s'){
+                    return "#74c476";
+                  }else if (d.decade_s == '1920s'){
+                    return "#c7e9c0";
+                  }else if (d.decade_s == '1930s'){
+                    return "#756bb1";
+                  }else if (d.decade_s == '1940s'){
+                    return "#9e9ac8";
+                  }else if (d.decade_s == '1950s'){
+                    return "#bcbddc";
+                  }else if (d.decade_s == '1960s'){
+                    return "#dadaeb";
+                  }else if (d.decade_s == '1970s'){
+                    return "#de9ed6";
+                  }else if (d.decade_s == '1980s'){
+                    return "#ce6dbd";
+                  }else if (d.decade_s == '1990s'){
+                    return "#e7969c";
+                  }else if (d.decade_s == '2000s'){
+                    return "#d6616b";
+                  }
+                })
+                .format({
+                  "text": function(text, params) {
+
+                    if (text === "count") {
+                      return "Word Count";
+                    }else if(text === "share"){
+                      return "Share of Category";
+                    }
+                    else {
+                      return d3plus.string.title(text, params);
+                    }
+
+                  }
+                })
+                .labels({"align": "center"})
+                .legend(false)
+                .draw()
+
+
+
+            });
+
+            function type(d){
+              d.value = +d.value;
+              return d;
+            }
+          </script>
+
+        </div>
+
+
+
+      </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="http://cdn.rawgit.com/SingaporeNews/singaporenews.github.io/master/js/docs.min.js"></script>
+  </body>
+</html>

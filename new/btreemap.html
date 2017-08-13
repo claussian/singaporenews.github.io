@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="Paul Meinshausen" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Singapore News Story</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- plus a jQuery UI theme, here I use "flick" -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/flick/jquery-ui.css">
+
+    <!-- Custom styles for this template -->
+    <link href="cover.css" rel="stylesheet">
+    <link href="charts.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <!--<script src="../../assets/js/ie-emulation-modes-warning.js"></script>-->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="d3.js"></script>
+    <script type="text/javascript" src="d3.layout.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+
+  </head>
+  <style>
+    .chart {
+      display: block;
+      margin: auto;
+      margin-top: 40px;
+    }
+
+    text {
+      font-size: 11px;
+    }
+
+    rect {
+      fill: none;
+    }
+
+
+
+  </style>
+
+  <body>
+    <div class="jumbotron vertical-center">
+      <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header">
+          <!--<p class="navbar-title">The Singapore Story</p>-->
+          <div class="navbar-title">
+              <ul class="nav masthead-nav">
+                <li id="li_learn"><a href="http://singaporenews.github.io/new/treemap.html">Learn</a></li>
+                <li class="active" id="li_explore"><a href="http://singaporenews.github.io/new/line.html">Explore</a></li>
+                <li id="li_context"><a href="http://singaporenews.github.io/new/streamgraph.html">Compare</a></li>
+              </ul>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container" style="margin-top: 50px;">
+        <div class="row">
+          <div class="col-md-12" id="chart">
+            <!--
+            <p>
+              <label for="nRadius"
+                     style="display: inline-block; width: 240px; text-align: right">
+                     year = <span id="nRadius-value">…</span>
+              </label>
+              <input type="range" min="1845" max="2009" id="nRadius">
+            </p>
+          -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="slider">
+            <form>
+              <label><input type="radio" name="mode" value="size" checked> Size</label>
+              <label><input type="radio" name="mode" value="count"> Count</label>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+
+
+    var width = window,
+        d = document,
+        e = d.documentElement,
+        g = d.getElementById('chart'),
+        w = g.clientWidth/1, //w.innerWidth || e.clientWidth || g.clientWidth,
+        h = e.clientHeight/1.2,//w.innerHeight|| e.clientHeight|| g.clientHeight;
+        x = d3.scale.linear().range([0, w]),
+        y = d3.scale.linear().range([0, h]),
+        root,
+        node;
+
+
+    var ocolor = d3.scale.category20c();
+    var color = d3.scale.ordinal()
+      .domain(["events", "personplace", "government", "business"])
+      .range(["#a6cee3", "#b2df8a" , "#fb9a99", "#fdbf6f"]);
+
+    var svg = d3.select("#chart").append("div")
+        .attr("class", "chart")
+        .style("width", w + "px")
+        .style("height", h + "px")
+      .append("svg:svg")
+        .attr("width", w)
+        .attr("height", h)
+      .append("svg:g")
+        .attr("transform", "translate(.5,.5)");
+
+    var treemap = d3.layout.treemap()
+      .round(false)
+      .size([w, h])
+      .sticky(false)
+      .value(function(d) { return d.size; });
+
+    d3.json("Topwords_abstract_bycategory_v1.json", function(data) {
+      data.forEach(function(d){
+        d.size = +d.stfreq;
+        d.name = d.word;
+      });
+
+        var fdata = data.filter(function(el){
+          return (el.year == '1964');
+        });
+
+        var ndata = data.filter(function(el){
+          return (el.year == '1984');
+        });
+
+        var tdata = {'key': 'News', 'values':
+         d3.nest()
+          .key(function(d){ return d.category; })
+          .key(function(d){ return d.name; })
+          .rollup(function(leaves){ return {'size': d3.sum(leaves, function(d){ return d.size; })}})
+          .entries(fdata)
+        };
+
+        var n_tdata = {'key': 'News', 'values':
+         d3.nest()
+          .key(function(d){ return d.category; })
+          .key(function(d){ return d.name; })
+          .rollup(function(leaves){ return {'size': d3.sum(leaves, function(d){ return d.size; })}})
+          .entries(ndata)
+        };
+        console.log(tdata);
+
+
+        var troot = {'name': 'News', 'children':
+          tdata.values.map(function(category){
+            return {'name': category.key, 'children':
+              category.values.map(function(pagegroup){
+                return {'name': pagegroup.key, 'size':
+                  pagegroup.values.size
+                };
+              })
+            };
+          })
+        };
+
+        var n_troot = {'name': 'News', 'children':
+          n_tdata.values.map(function(category){
+            return {'name': category.key, 'children':
+              category.values.map(function(pagegroup){
+                return {'name': pagegroup.key, 'size':
+                  pagegroup.values.size
+                };
+              })
+            };
+          })
+        };
+
+
+        console.log(troot);
+        node = root = troot;
+        n_node = n_root = n_troot;
+
+        var nodes = treemap.nodes(root)
+            .filter(function(d) { return !d.children; });
+
+        var cell = svg.selectAll("g")
+            .data(nodes)
+          .enter().append("svg:g")
+            .attr("class", "cell")
+            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+            .on("click", function(d) { return zoom(node == d.parent ? root : d.parent); });
+
+        cell.append("svg:rect")
+            .attr("width", function(d) { return d.dx - 1; })
+            .attr("height", function(d) { return d.dy - 1; })
+            .style("fill", function(d) { return color(d.parent.name); });
+
+        cell.append("svg:text")
+            .attr("x", function(d) { return d.dx / 2; })
+            .attr("y", function(d) { return d.dy / 2; })
+            .attr("dy", ".35em")
+            .attr("text-anchor", "middle")
+            .text(function(d) { return d.name + ' (' + Math.round(d.size) + ')'; })
+            .style("opacity", function(d) { d.w = this.getComputedTextLength(); return d.dx > d.w ? 1 : 0; });
+
+        d3.select(window).on("click", function() { zoom(root); });
+
+        d3.selectAll("input").on("change", function change() {
+          node
+            .data(treemap.value(value).nodes)
+        });
+
+        function size(d) {
+          return d.size;
+        }
+
+        function count(d) {
+          return 1;
+        }
+
+        function zoom(d) {
+          var kx = w / d.dx, ky = h / d.dy;
+          x.domain([d.x, d.x + d.dx]);
+          y.domain([d.y, d.y + d.dy]);
+
+          var t = svg.selectAll("g.cell").transition()
+              .duration(d3.event.altKey ? 7500 : 750)
+              .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+
+          t.select("rect")
+              .attr("width", function(d) { return kx * d.dx - 1; })
+              .attr("height", function(d) { return ky * d.dy - 1; })
+
+          t.select("text")
+              .attr("x", function(d) { return kx * d.dx / 2; })
+              .attr("y", function(d) { return ky * d.dy / 2; })
+              .style("opacity", function(d) { return kx * d.dx > d.w ? 1 : 0; });
+
+          node = d;
+          d3.event.stopPropagation();
+        }
+
+      d3.select("#nRadius").on("input", function() {
+        d3.select('.chart').transition().remove();
+        update(+this.value);
+      });
+
+      function update(nRadius) {
+
+        // adjust the text on the range slider
+        d3.select("#nRadius-value").text(nRadius);
+        d3.select("#nRadius").property("value", nRadius);
+
+        redraw(nRadius);
+
+
+
+
+      }
+
+
+    });
+
+
+
+
+    </script>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>-->
+    <!-- include the jQuery and jQuery UI scripts -->
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="http://cdn.rawgit.com/SingaporeNews/singaporenews.github.io/master/js/docs.min.js"></script>
+
+  </body>
+</html>

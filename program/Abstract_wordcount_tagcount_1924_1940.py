@@ -8,22 +8,22 @@ import logging
 import nltk
 import csv
 import re
-import pandas
-import pickle
-import codecs
+#import pandas
+#import pickle
+#import codecs
 import random
-import json
+#import json
 #from gensim import corpora, models, similarities
 #from nltk.util import ngrams 
 from datetime import timedelta
 from time import strftime
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from nltk.stem.porter import PorterStemmer
+#from sklearn.feature_extraction.text import CountVectorizer
+#from sklearn.feature_extraction.text import TfidfVectorizer
+#from nltk.stem.porter import PorterStemmer
 
 
 
-logging.basicConfig(filename='Processing_abstracts.log',level=logging.DEBUG)
+logging.basicConfig(filename='Processing_abstracts_1924_1940.log',level=logging.DEBUG)
 
 #Timer
 tic = timeit.default_timer()
@@ -44,7 +44,7 @@ tic = timeit.default_timer()
 #	writer.writerows([['Year','DayCount','ArticleCount']])
 
 count = 1
-for year in range(1910,2010):
+for year in range(1924,1941):
 	#unvectorized abstracts for current year, decoded, for tagging
 	homestring = []
 	#unvectorized abstracts for current year
@@ -59,10 +59,12 @@ for year in range(1910,2010):
 	logging.info('Reading abstracts for %d...', year)
 	with open('Abstracts_' + str(year) + '.txt') as f:
 		for x in f.readlines()[1:]:
+
 			x = re.sub(r'([()?:!,\'])', r'', x)
 			#remove non-informative abstracts
 			x = x.strip('\r\n').split('\t')
 			dater.append(x[0])
+			#print x[0]
 			if x[1]!='909090' and x[1]!='808080':
 				para = x[2]
 				datermark.append(1)
@@ -96,7 +98,7 @@ for year in range(1910,2010):
 		for word in wordset:
 			w = [year,word.encode('utf-8'),worddict[word],freqdict[word]]
 			wfreq.append(w)
-		with open('Homenews_word_tag_frequency.csv', 'a') as h:
+		with open('Homenews_word_tag_frequency_1924.csv', 'a') as h:
 			writer = csv.writer(h, delimiter=',')
 			writer.writerows(wfreq)
 		#allwords.append(wfreq)
@@ -108,7 +110,7 @@ for year in range(1910,2010):
 		tfreq = [list(y) for y in freq]
 		for y in tfreq:
 			y.append(year) 
-		with open('Homenews_tag_frequency.csv', 'a') as j:
+		with open('Homenews_tag_frequency_1924.csv', 'a') as j:
 			writer = csv.writer(j, delimiter=',')
 			writer.writerows(tfreq)
 		#alltags.append(tfreq)
@@ -132,7 +134,7 @@ for year in range(1910,2010):
 		for word in wordset:
 			w = [year,word.encode('utf-8'),worddict[word],freqdict[word]]
 			wfreq.append(w)
-		with open('Wirenews_word_tag_frequency.csv', 'a') as h:
+		with open('Wirenews_word_tag_frequency_1924.csv', 'a') as h:
 			writer = csv.writer(h, delimiter=',')
 			writer.writerows(wfreq)
 		#allwords.append(wfreq)
@@ -144,7 +146,7 @@ for year in range(1910,2010):
 		tfreq = [list(y) for y in freq]
 		for y in tfreq:
 			y.append(year) 
-		with open('Wirenews_tag_frequency.csv', 'a') as j:
+		with open('Wirenews_tag_frequency_1924.csv', 'a') as j:
 			writer = csv.writer(j, delimiter=',')
 			writer.writerows(tfreq)
 		#alltags.append(tfreq)
@@ -164,7 +166,7 @@ for year in range(1910,2010):
 		uniqueset = set(unique)
 
 		total = [year,len(uniqueset),len(unique)]
-		with open('Abstracts_count.csv', 'a') as k:
+		with open('Abstracts_count_1924.csv', 'a') as k:
 			writer = csv.writer(k, delimiter=',')
 			writer.writerows([total])
 
